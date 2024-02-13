@@ -1,0 +1,177 @@
+
+
+<!doctype html>
+<html>
+        <meta charSet="utf-8" />
+        <title>Browser Post-Quantum Cryptography Key Agreement</title>
+        <style type="text/css">
+         body {
+             font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+             margin: 0;
+             color: #1c1e21;
+         }
+
+         h1 {
+             font-size: 2rem;
+             line-height: normal;
+         }
+
+         a {
+             color: #f38020;
+             text-decoration: none;
+         }
+
+         #content {
+             grid-area: content;
+             margin-left: 2rem;
+             margin-right: 3rem;
+             line-height: 1.5rem;
+             z-index: -5;
+             max-width: 800px;
+         }
+
+         .center {
+             display: block;
+             margin-left: auto;
+             margin-right: auto;
+             width: 100%;
+         }
+
+
+         .ok {
+             color: green;
+         }
+         .bad {
+             color: red;
+         }
+         .warn {
+             color: orange;
+         }
+        </style>
+        <body><article id="content">
+            <h1>Browser Post-Quantum Key Agreement Check</h1>
+            <h2>NCSA Network Security Research</h2>
+            <img style="max-width: 800px"
+                 src="flow.png" />
+            <p>
+                <div id="connInfo"><p>Checking connection …</p></div>
+                
+                <script type="text/javascript">
+                 const kexes = function() {
+                     let kexLut = {
+                         23: [false, "P-256"],
+                         24: [false, "P-384"],
+                         24: [false, "P-521"],
+                         29: [false, "X25519"],
+                         65072: [true, "X25519Kyber512Draft00"],
+                         65073: [true, "X25519Kyber768Draft00Old"],
+                         65074: [true, "P256Kyber768Draft00"],
+                         25497: [true, "X25519Kyber768Draft00"]
+                     };
+                     return {
+                         byId: function(id) {
+                             if (!(id in kexLut))
+                                 return { pq: false, name: `unknown (${id})` };
+                             return { pq: kexLut[id][0], name: kexLut[id][1] };
+                         },
+                         byName: function(name) {
+                             for (const id in kexLut) {
+                                 if (kexLut[id][1] === name)
+                                     return { pq: kexLut[id][0], name: kexLut[id][1] };
+                             }
+                             return { pq: false, name: `unknown (${name})` };
+                         },
+                         explain: function(kex) {
+                             if (kex === null) {
+                                 return `<p>Your connection was not served by the infrastructure
+              that supports our post-quantum key agreement
+              (private relay?) and thus
+            is <strong class="warn">probably not post-quantum secure</strong>.</p>`;
+                             }
+                             if (kex.pq) {
+                                 return `<p><img class="center" style="max-width: 200px" src="https://blog.cloudflare.com/content/images/2021/01/KEMTLS--Post-quantum-TLS-without-signatures-blog-home-2.png"/> <br>  ✅ You are using <em>${kex.name}</em> which
+              is <strong class="ok">post-quantum secure</strong> [1].</p>`;
+                             }
+                             return `<p><img class="center" style="max-width: 100px" src="https://www.zaginteractive.com/ZAGInteractive/media/Images/Blog/transport-layer-security.jpg"/><br>You are using <em>${kex.name}</em> which
+              is <strong class="bad">not post-quantum secure</strong> [3].</p>`;
+                         }
+                     };
+                 }();
+                 fetch('https://pq.cloudflareresearch.com/cdn-cgi/trace')
+                     .then(response => response.text())
+                     .then(function(text) {
+                         const name = [...text.matchAll(/(?:^|\n)kex=(\w+)(?:\n|$)/g)][0][1];
+                         document.getElementById('connInfo').innerHTML = kexes.explain(kexes.byName(name));
+                     });
+                </script>
+                
+                <h2>Enable PQC for clients (browser) and servers</h2>
+                <ul>
+                    <li><a href="https://www.google.com/chrome/"
+                        ><strong>Chrome</strong> 116+</a>
+                        if you turn on
+                        <em>TLS 1.3 hybridized Kyber support</em>
+                        (<code>enable-tls13-kyber</code>)
+                        in <code>chrome://flags</a>.</code></li>
+                    <li><a href="https://www.mozilla.org/en-US/firefox/channel/desktop/"
+                        ><strong>Firefox Nightly</strong> 2024-01-18+</a>
+                        if you turn on <code>security.tls.enable_kyber</code>
+                        in <code>about:config</code>. <strong>[new!]</strong></li>
+                    <li><a href="https://boringssl.googlesource.com/boringssl/"
+                        ><strong>BoringSSL</strong></a>. Upstream only
+                        supports <code>0x6399</code>; for the others use
+                        our old <a href="https://github.com/cloudflare/boringssl-pq"
+                                >fork</a>.</li>
+                    <li><a href="https://openquantumsafe.org/">Open Quantum Safe</a> C library.</li>
+                    <li><a href="https://caddyserver.com/"><strong>Caddy</strong> HTTP server</a>
+                        nightly <a href="https://gist.github.com/bwesterb/2f7bfa7ae689de0d242b56ea3ecac424">compiled with cfgo</a>.</li>
+                </ul>
+
+                <h2> Snapshot of PQC measured from NCSA network backbone </h2>
+
+                <img class="center" style="max-width: 1200px" src="snap-1.png"/>
+
+                <img class="center" style="max-width: 1200px" src="snap-2.png"/>
+
+
+
+                <h2>NIST draft key agreements</h2>
+                <p>Available with TLSv1.3 including HTTP/3 (QUIC)
+                    <table>
+                        <tr><th>Key agreement</th>
+                            <th>TLS identifier</th>
+                            <td></td></tr>
+                        <tr><td><a href="https://datatracker.ietf.org/doc/draft-tls-westerbaan-xyber768d00/"
+                                >X25519Kyber768Draft00</a></td>
+                            <td><code>0x6399</code> (recommended) and <code>0xfe31</code> (obsolete)</td>
+                            <td></td></tr>
+                        <tr><td>X25519Kyber512Draft00</td>
+                            <td><code>0xfe30</code></td>
+                            <td></td></tr>
+                    </table>
+                    <small>X25519Kyber<em>[x]</em>Draft00 is a
+                        <a href="https://www.ietf.org/archive/id/draft-ietf-tls-hybrid-design-06.txt">hybrid</a>
+                        of <a href="https://datatracker.ietf.org/doc/html/rfc7748">X25519</a>
+                        and <a href="https://github.com/bwesterb/draft-schwabe-cfrg-kyber">Kyber<em>[x]</em>Draft00</a>
+                        (in that order).</small>
+                </p>
+
+
+                <h2>Team</h2>
+                <p>
+                    Phuong Cao
+                    <a href="mailto:pcao3@illinois.edu">pcao3@illinois.edu</a>
+                </p>
+                <p>
+                    NCSA SPIN students.
+                </p>
+                <h2>References</h2>
+                <p>
+                    [1] Migration to Post-Quantum Cryptography Quantum Readiness: Testing Draft Standards, https://www.nccoe.nist.gov/sites/default/files/2023-12/pqc-migration-nist-sp-1800-38c-preliminary-draft.pdf
+                    <br>
+                    [2] Cloudflare research on PQC, https://pq.cloudflareresearch.com/cdn-cgi/trace
+                    <br>
+                    [3] Curve25519: New Diffie-Hellman Speed Records, Daniel J. Bernstein, https://link.springer.com/chapter/10.1007/11745853_14
+                </p>
+        </body>
+</html>
