@@ -105,10 +105,10 @@
             is <strong class="warn">probably not post-quantum secure</strong>.</p>`;
                              }
                              if (kex.pq) {
-                                 return `<p><img class="center" style="max-width: 200px" src="https://blog.cloudflare.com/content/images/2021/01/KEMTLS--Post-quantum-TLS-without-signatures-blog-home-2.png"/> <br>  ✅ You are using <em>${kex.name}</em> which
+                                 return `<p><img class="center" style="max-width: 200px" src="https://blog.cloudflare.com/content/images/2021/01/KEMTLS--Post-quantum-TLS-without-signatures-blog-home-2.png"/> <br>  ✅ You HTTPS connection is using <em>${kex.name}</em> which
               is <strong class="ok">post-quantum secure</strong> [1].</p>`;
                              }
-                             return `<p><img class="center" style="max-width: 100px" src="https://www.zaginteractive.com/ZAGInteractive/media/Images/Blog/transport-layer-security.jpg"/><br>You are using <em>${kex.name}</em> which
+                             return `<p><img class="center" style="max-width: 100px" src="https://www.zaginteractive.com/ZAGInteractive/media/Images/Blog/transport-layer-security.jpg"/><br>Your HTTPS connection is using <em>${kex.name}</em> which
               is <strong class="bad">not post-quantum secure</strong> [3].</p>`;
                          }
                      };
