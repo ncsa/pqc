@@ -121,17 +121,17 @@
                      });
                 </script>
                 
-                <h2>Enable PQC for clients (browser) and servers</h2>
+                <h2>Instructions to enable PQC for client-side (browsers) and server-side</h2>
                 <ul>
                     <li><a href="https://www.google.com/chrome/"
                         ><strong>Chrome</strong> 116+</a>
-                        if you turn on
+                        Turn on
                         <em>TLS 1.3 hybridized Kyber support</em>
                         (<code>enable-tls13-kyber</code>)
                         in <code>chrome://flags</a>.</code></li>
                     <li><a href="https://www.mozilla.org/en-US/firefox/channel/desktop/"
                         ><strong>Firefox Nightly</strong> 2024-01-18+</a>
-                        if you turn on <code>security.tls.enable_kyber</code>
+                        Turn on <code>security.tls.enable_kyber</code>
                         in <code>about:config</code>. <strong>[new!]</strong></li>
                     <li><a href="https://boringssl.googlesource.com/boringssl/"
                         ><strong>BoringSSL</strong></a>. Upstream only
@@ -151,7 +151,7 @@
 
 
 
-                <h2>NIST draft key agreements</h2>
+                <h2>NIST draft key agreements (FIPS 203, FIPS 204, FIPS 205)</h2>
                 <p>Available with TLSv1.3 including HTTP/3 (QUIC)
                     <table>
                         <tr><th>Key agreement</th>
