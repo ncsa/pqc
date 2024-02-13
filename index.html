@@ -47,6 +47,16 @@
          .warn {
              color: orange;
          }
+
+         .infinity-2 {
+             width:90px;
+             height:14px;
+             background: radial-gradient(circle closest-side, currentColor 92%,#0000 ) calc(100%/3) 0/calc(100%/4) 100%;
+             animation:i2 0.5s infinite linear;
+         }
+         @keyframes i2 {
+             100% {background-position: 0 0}
+         }
         </style>
         <body><article id="content">
             <h1>Browser Post-Quantum Key Agreement Check</h1>
@@ -54,7 +64,13 @@
             <img style="max-width: 800px"
                  src="flow.png" />
             <p>
+                <center>
+                <div class="infinity-2"></div>
+
+                <h2>Key Agreement Check</h2>
                 <div id="connInfo"><p>Checking connection …</p></div>
+                </center>
+
                 
                 <script type="text/javascript">
                  const kexes = function() {
